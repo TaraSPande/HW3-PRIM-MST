@@ -33,7 +33,14 @@ def check_mst(adj_mat: np.ndarray,
     for i in range(mst.shape[0]):
         for j in range(i+1):
             total += mst[i, j]
+        assert np.count_nonzero(mst) > 0                    #assert MST is connected! (at least 1 weight per node)
     assert approx_equal(total, expected_weight), 'Proposed MST has incorrect expected weight'
+
+    assert np.array_equal(mst, np.transpose(mst))           #assert that the MST array is symmetric about diagonal (undirected)
+    assert np.count_nonzero(mst) / 2 == mst.shape[0] - 1    #assert that the number of edges in MST is V - 1
+    assert mst.shape[0] == mst.shape[1]                     #assert mst is a square array
+    assert adj_mat.shape[0] == mst.shape[0]                 #assert mst is same size as adj_mat
+
 
 
 def test_mst_small():
@@ -65,10 +72,24 @@ def test_mst_single_cell_data():
     check_mst(g.adj_mat, g.mst, 57.263561605571695)
 
 
-def test_mst_student():
+def test_mst_student1():
     """
     
     TODO: Write at least one unit test for MST construction.
     
     """
-    pass
+    file_path = './data/medium.csv'         #this is an example I took from GeeksForGeeks that helped debug my code!
+    g = Graph(file_path)
+    g.construct_mst()
+    check_mst(g.adj_mat, g.mst, 37)
+
+def test_mst_student2():
+    """
+    
+    TODO: Write second unit test for MST construction.
+    
+    """
+    file_path = './data/edge_case.csv'      #this is my attempt at an edge case where the greedy path is less obvious
+    g = Graph(file_path)
+    g.construct_mst()
+    check_mst(g.adj_mat, g.mst, 7)

@@ -40,5 +40,31 @@ class Graph:
         use of priority queues in your implementation. Refer to the heapq module, particularly the 
         `heapify`, `heappop`, and `heappush` functions.
 
-        """
-        self.mst = None
+        """                                     #IM ASSUMING ADJ_MAT IS FORMATTED CORRECTLY AS SPECIFIED ^^
+        size = self.adj_mat.shape[0]
+        self.mst = np.zeros((size, size))       #initialize mst to be same dimensions as adj_mat
+
+        visited = [False] * size                #initialize visited list to track nodes visited
+
+        heap = []
+        heapq.heapify(heap)                     #initialize heap (sorts weights to return smallest)
+
+        out = 0
+        visited[out] = True                     #first node is 0; it is now visited
+
+        while False in visited:                 #while we haven't visited all nodes yet
+            for into in range(size):
+                weight = self.adj_mat[out][into]
+                if weight > 0:
+                    heapq.heappush(heap, (weight, out, into))   #add all neighbors w/ weights to heap if > 0
+
+            weight, out, into = heapq.heappop(heap)
+            while visited[into]:
+                weight, out, into = heapq.heappop(heap)         #pop smallest node, until its destination hasn't been visited yet
+            
+            self.mst[out][into] = weight                        #add weights to mst at position (into, out) and (out, into)
+            self.mst[into][out] = weight                        #(should be symmetric along diagonal since undirected)
+
+            visited[into] = True                                #set this new node we visited to true
+            out = into                                          #after looping, add new neighbors to most recently visited
+
